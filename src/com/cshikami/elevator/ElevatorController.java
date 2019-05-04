@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import com.cshikami.identification.InvalidDataException;
 
+import com.cshikami.gui.ElevatorDisplay;
+
 /**
  * Singleton ElevatorController that controls the elevators
  * @author christopher_shikami
@@ -21,9 +23,10 @@ public final class ElevatorController {
 
 
 	private ElevatorController() throws InvalidDataException {
-		//create elevators and put them in elevators HashMap
+		//create elevators, put them in elevators HashMap, and add the elevators to the UI
 		for (int i = 1; i <= NUM_ELEVATORS; i++) {
 			elevators.put(i, createNewElevator(i));
+			ElevatorDisplay.getInstance().addElevator(i, 1);
 		}
 	}
 
@@ -64,6 +67,8 @@ public final class ElevatorController {
 	 */
 	public void operateElevators(int milliseconds) {
 		//movable = MovableImplFactory.createMovable
+		//
+		
 	}
 
 	//test method to see how many Elevators are in the Building
