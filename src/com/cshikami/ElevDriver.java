@@ -1,5 +1,10 @@
 package com.cshikami;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 import com.cshikami.building.Building;
 import com.cshikami.elevator.Elevator;
 import com.cshikami.elevator.ElevatorController;
@@ -19,22 +24,9 @@ public class ElevDriver {
 
 	public static void main(String[] args) throws InterruptedException, InvalidDataException {
 		
-		//Building.getInstance().getFloors();
-		
-//		try {
-//			Person p = new StandardPerson(3);
-//			System.out.println(p);
-//			Person p2 = new StandardPerson(4);
-//			System.out.println(p2);
-//			
-//			Elevator e = new StandardElevator(1);
-//			Elevator e2 = new StandardElevator(2);
-//			System.out.println(e);
-//			System.out.println(e2);
-//			
-//		} catch (InvalidDataException e) {
-//			e.printStackTrace();
-//		}
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		Calendar calendar = new GregorianCalendar(0, 0, 0);	
+		System.out.println(sdf.format(calendar.getTime()));
 		
 		ElevatorDisplay.getInstance().initialize(Building.NUM_FLOORS);
 		Building.getInstance();
