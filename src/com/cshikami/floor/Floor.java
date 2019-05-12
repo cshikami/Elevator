@@ -17,6 +17,8 @@ public class Floor {
 	
 	private List<Person> peopleWaiting = new ArrayList<Person>(); 
 	private List<Person> peopleDone = new ArrayList<Person>();
+	Person person;
+	
 	
 	public Floor(int floorNumberIn) {
 		
@@ -25,6 +27,37 @@ public class Floor {
 	
 	public void addWaitingPersonToFloor(Person person) {
 		peopleWaiting.add(person);
+	}
+	
+	public void addRiderToDone(Person person) {
+		peopleDone.add(person);
+	}
+	
+	public List<Person> getPeopleDone() {
+		return peopleDone;
+	}
+	
+	public Person getPersonWaiting() {
+		return peopleWaiting.get(0);
+	}
+	
+	public List<Person> getPeopleWaiting() {
+		return peopleWaiting;
+//		Person person = null;
+//		for(int i = 0; i <= peopleWaiting.size(); i++) {
+//			person = peopleWaiting.get(i);
+//		}
+//		return person;	 
+	}
+	
+	public void removePersonWaiting(int person) {
+		System.out.println("Removed " + peopleWaiting.get(person));
+		peopleWaiting.remove(person);
+		
+	}
+	
+	public void removePeopleWaiting() {
+		peopleWaiting.clear();
 	}
 	
 	public String toString() {

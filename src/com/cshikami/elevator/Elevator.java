@@ -1,9 +1,12 @@
 package com.cshikami.elevator;
 
 import com.cshikami.identification.Identifiable;
+import com.cshikami.movement.Movable;
 
-public interface Elevator extends Identifiable {
+public interface Elevator extends Identifiable, Movable {
 	
-	public void addFloorRequest(Request request);
+	public void addFloorRequest(FloorRequest request);
+
+	public void move(int milliseconds) throws InterruptedException;
 
 }

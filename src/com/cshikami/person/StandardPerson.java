@@ -12,12 +12,12 @@ public class StandardPerson implements Person {
 	
 	private Person myPerson; //Delegate - will refer to some implementation object
 	
-	//int desiredFloor;
+	int desiredFloor;
 
 	public StandardPerson(int desiredFloorIn) throws InvalidDataException {
 		
 		myPerson = PersonImplFactory.createPerson(desiredFloorIn);
-		//desiredFloor = desiredFloorIn;
+		desiredFloor = desiredFloorIn;
 	}
 	
 	public String getIdentifier() {
@@ -26,6 +26,18 @@ public class StandardPerson implements Person {
 	
 	public String toString() {
 		return getIdentifier();
+	}
+
+	@Override
+	public void setDestination(int destination) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getDestination() {
+		// TODO Auto-generated method stub
+		return desiredFloor;
 	}
 	
 }

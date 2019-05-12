@@ -10,7 +10,7 @@ public class StandardElevator implements Elevator {
 	
 	private Elevator elevator;
 	
-	private final List<Request> floorRequests = new ArrayList<>();
+	private final List<FloorRequest> floorRequests = new ArrayList<>();
 
 	public StandardElevator(int elevatorIdIn) throws InvalidDataException {
 		
@@ -27,9 +27,27 @@ public class StandardElevator implements Elevator {
 	}
 
 	@Override
-	public void addFloorRequest(Request request) {
+	public void addFloorRequest(FloorRequest request) {
 		floorRequests.add(request);
 		
+	}
+
+	@Override
+	public void move(int milliseconds) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setDestination(int destination) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getDestination() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

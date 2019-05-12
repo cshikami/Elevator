@@ -64,10 +64,16 @@ public final class ElevatorController {
 	/**
 	 * Move all elevators at speed milliseconds
 	 * @param milliseconds
+	 * @throws InterruptedException 
 	 */
-	public void operateElevators(int milliseconds) {
+	public void operateElevators(int milliseconds) throws InterruptedException {
 		//movable = MovableImplFactory.createMovable
-		//
+		//ElevatorDisplay.getInstance().updateElevator(id, floor, numRiders, dir);
+		//for all the elevators, move each elevator, regardless of elevator type
+		for (int i = 1; i <= elevators.size(); i++) {
+			System.out.println("Operating elevator:" + elevators.get(i));
+			elevators.get(i).move(1000);
+		}
 		
 	}
 
