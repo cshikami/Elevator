@@ -1,9 +1,16 @@
 package com.cshikami.building;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import com.cshikami.elevator.Direction;
 import com.cshikami.elevator.ElevatorController;
@@ -21,20 +28,23 @@ import com.cshikami.person.PersonImplFactory;
 public final class Building {
 	
 	private volatile static Building ourInstance;
-	public static final int NUM_FLOORS = 20;
+	private int NUM_FLOORS;
 	
 	private Map<Integer, Floor> floors = new HashMap<>();
 	private Person person;
+	
 	
 	
 	private Building() {
 		//create floors in building by adding floor numbers and the floor with associated number to a hashmap
 		//up to NUM FLOORS
 		//
-		for (int i = 1; i <= NUM_FLOORS; i++) {
-			floors.put(i, new Floor(i));
-		}
+//		for (int i = 1; i <= NUM_FLOORS; i++) {
+//			floors.put(i, new Floor(i));
+//		}
 	}
+	
+	
 	
 	public static Building getInstance() {
 		if (ourInstance == null) {
@@ -45,6 +55,18 @@ public final class Building {
 			}	
 		} 
 		return ourInstance;
+	}
+	
+	//create floors in building by adding floor numbers and the floor with associated number to a hashmap
+			//up to NUM FLOORS
+	public void init() {
+		for (int i = 1; i <= NUM_FLOORS; i++) {
+			floors.put(i, new Floor(i));
+		}
+	}
+	
+	public void setNumberOfFloors(int numberOfFloorsIn) {
+		NUM_FLOORS = numberOfFloorsIn;
 	}
 	
 	/**
@@ -61,12 +83,14 @@ public final class Building {
 		
 		//use a factory to create a Person with desired floor endFloor
 		person = PersonImplFactory.createPerson(endFloor);
+		System.out.println(person + " created on " + startFloor + ", wants to go " + d + " to " + endFloor);
 		//add that new person to the building's floor
 		floors.get(startFloor).addWaitingPersonToFloor(person);
-		System.out.println(floors);
+		//System.out.println(floors);
+		
 		//get Elevator number and add a floor request to the elevator specified by elevatorNumber
 		ElevatorController.getInstance().getElevator(elevatorNumber).addFloorRequest(new FloorRequest(startFloor, d));
-		System.out.println(person + " created.");
+		System.out.println(person + " presses " + d + " on " + startFloor);
 		
 	}
 	
@@ -77,6 +101,16 @@ public final class Building {
 		}
 		return people;
 	}
+	
+	public List<Person> getPeopleDone() {
+		List<Person> people = new ArrayList<Person>();
+		for (int i = 1; i < floors.size(); i++) {
+			people = floors.get(i).getPeopleDone();
+		}
+		return people;
+	}
+	
+	
 	
 //	public Person getPersonWaiting() {
 //		
@@ -89,6 +123,11 @@ public final class Building {
 	public List<Person> getFloorPeopleWaiting(int theFloor) {
 		Floor floor = floors.get(theFloor);
 		return floor.getPeopleWaiting();
+	}
+	
+	public List<Person> getFloorPeopleDone(int theFloor) {
+		Floor floor = floors.get(theFloor);
+		return floor.getPeopleDone();
 	}
 	
 	public void removeFloorPeopleWaiting(int theFloor) {

@@ -50,4 +50,16 @@ public class StandardElevator implements Elevator {
 		return 0;
 	}
 
+	@Override
+	public void setMaxPersonsPerElevator(int maxPersonsPerElevator) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getMaxPersonsPerElevator() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

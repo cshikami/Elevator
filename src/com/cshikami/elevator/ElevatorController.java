@@ -17,13 +17,20 @@ public final class ElevatorController {
 	private static ElevatorController ourInstance;
 
 	private Elevator elevator;
-	private static final int NUM_ELEVATORS = 4;
+	private int NUM_ELEVATORS;
 	private Map<Integer, Elevator> elevators = new HashMap<>();
 	//private Movable movable;
 
 
 	private ElevatorController() throws InvalidDataException {
 		//create elevators, put them in elevators HashMap, and add the elevators to the UI
+//		for (int i = 1; i <= NUM_ELEVATORS; i++) {
+//			elevators.put(i, createNewElevator(i));
+//			ElevatorDisplay.getInstance().addElevator(i, 1);
+//		}
+	}
+	
+	public void init() throws InvalidDataException {
 		for (int i = 1; i <= NUM_ELEVATORS; i++) {
 			elevators.put(i, createNewElevator(i));
 			ElevatorDisplay.getInstance().addElevator(i, 1);
@@ -39,6 +46,21 @@ public final class ElevatorController {
 			}
 		}
 		return ourInstance;
+	}
+	
+	public void setElevatorMaxCapacity(int maxCapacity) {
+		for (int i = 1; i <= elevators.size(); i++) {
+			elevators.get(i).setMaxPersonsPerElevator(maxCapacity);
+		}
+	}
+	
+	public void getElevatorMaxCapacity() {
+		int capacity;
+		for (int i = 1; i < elevators.size(); i++) {
+			capacity = elevators.get(i).getMaxPersonsPerElevator();
+			System.out.println("Elevator " + i + "'s max capacity: " +capacity);
+		}
+
 	}
 
 	/**
@@ -71,10 +93,10 @@ public final class ElevatorController {
 		//ElevatorDisplay.getInstance().updateElevator(id, floor, numRiders, dir);
 		//for all the elevators, move each elevator, regardless of elevator type
 		for (int i = 1; i <= elevators.size(); i++) {
-			System.out.println("Operating elevator:" + elevators.get(i));
+			//System.out.println("Operating elevator:" + elevators.get(i));
+			//elevators.get(i).
 			elevators.get(i).move(1000);
 		}
-		
 	}
 
 	//test method to see how many Elevators are in the Building
@@ -82,6 +104,10 @@ public final class ElevatorController {
 		for(int i = 1; i <= elevators.size(); i++) {
 			System.out.println("Elevator " + i + " is " + elevators.get(i));
 		}
+	}
+
+	public void setNumberOfElevators(int numberOfElevators) {
+		NUM_ELEVATORS = numberOfElevators;
 	}
 
 

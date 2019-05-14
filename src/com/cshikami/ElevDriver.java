@@ -1,9 +1,17 @@
 package com.cshikami;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import com.cshikami.building.Building;
 import com.cshikami.elevator.Elevator;
@@ -24,19 +32,73 @@ public class ElevDriver {
 
 	public static void main(String[] args) throws InterruptedException, InvalidDataException {
 
-		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-		Calendar calendar = new GregorianCalendar(0, 0, 0);	
-		System.out.println(sdf.format(calendar.getTime()));
+		FileReader reader;
+		try {
+			// Create a FileReader object using your filename
+			reader = new FileReader("input.json");
+		} catch (FileNotFoundException ex) {
+			ex.printStackTrace();
+			return;
+		}
+		JSONParser jsonParser = new JSONParser();
+		JSONObject jObj;
 
-		ElevatorDisplay.getInstance().initialize(Building.NUM_FLOORS);
+		try {
+			// Create a JSONParser using the FileReader
+			jObj = (JSONObject) jsonParser.parse(reader);
+
+		} catch (IOException | ParseException e) {
+			e.printStackTrace();
+			return;
+		}
+		
+		int numberOfFloors = ((Long) jObj.get("numberOfFloorsInBuilding")).intValue();
+		Building.getInstance().setNumberOfFloors(numberOfFloors);
+		
+		Building.getInstance().init();
+		
+		int numberOfElevators = ((Long) jObj.get("numberOfElevatorsInBuilding")).intValue();
+		ElevatorController.getInstance().setNumberOfElevators(numberOfElevators);
+		
+		
+		ElevatorController.getInstance().getElevatorMaxCapacity();
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		
+		Calendar now = Calendar.getInstance();
+		now.set(Calendar.HOUR, 0);
+		now.set(Calendar.MINUTE, 0);
+		now.set(Calendar.SECOND, 0);
+		//System.out.println(sdf.format(now.getTime()));
+		now.set(Calendar.HOUR_OF_DAY, 0);
+		System.out.println(sdf.format(now.getTime()));
+		
+//		Instant start = Instant.now();
+//		System.out.println(start.g);
+		
+//		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+//		Calendar calendar = new GregorianCalendar(0, 0, 0);	
+//		System.out.println(sdf.format(calendar.getTime()));
+		//long currentTime = System.currentTimeMillis() - startTime;
+
+
+		ElevatorDisplay.getInstance().initialize(numberOfFloors);
+		
+		ElevatorController.getInstance().init();
+		
+		int maxPersonsPerElevator = ((Long) jObj.get("maxPersonsPerElevator")).intValue();
+		//System.out.println("*********maxPersonsPerElevator: " + maxPersonsPerElevator);
+		ElevatorController.getInstance().setElevatorMaxCapacity(maxPersonsPerElevator);
+		//ElevatorController.getInstance().setElevatorMaxCapacity(maxPersonsPerElevator);
 		Building.getInstance();
 
 		//test1();
 		//test2();
-		test3();
-		//test4();
+		//test3();
+		test4();
 
 		System.out.println("DONE");
+		ElevatorDisplay.getInstance().shutdown();
 	}
 
 	private static void test1() throws InterruptedException, InvalidDataException {
@@ -59,6 +121,9 @@ public class ElevDriver {
 	}
 
 	private static void test2() throws InvalidDataException, InterruptedException {
+		
+		//Building.getInstance().init();
+		
 		for (int i = 0; i < 60; i++) {
 
 			if (i == 0) {
@@ -112,7 +177,6 @@ public class ElevDriver {
 				Building.getInstance().addPerson(3, 1, 4);
 			}
 
-			Building.getInstance().getFloors();
 			ElevatorController.getInstance().operateElevators(1000);
 			Thread.sleep(1000);
 		}

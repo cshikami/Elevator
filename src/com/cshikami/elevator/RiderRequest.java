@@ -16,4 +16,8 @@ public class RiderRequest {
 	public void setDesiredFloor(int desiredFloorIn) {
 		desiredFloor = desiredFloorIn;
 	}
+	
+	public String toString() {
+		return desiredFloor + "";
+	}
 }

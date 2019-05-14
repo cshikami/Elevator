@@ -9,4 +9,8 @@ public interface Elevator extends Identifiable, Movable {
 
 	public void move(int milliseconds) throws InterruptedException;
 
+	public void setMaxPersonsPerElevator(int maxPersonsPerElevator);
+	
+	public int getMaxPersonsPerElevator();
+	
 }

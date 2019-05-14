@@ -26,4 +26,8 @@ public class FloorRequest {
 		direction = newDirection;
 	}
 	
+	public String toString() {
+		return start + "";
+	}
+	
 }
