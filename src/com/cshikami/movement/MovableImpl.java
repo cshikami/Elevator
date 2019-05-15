@@ -1,7 +1,5 @@
 package com.cshikami.movement;
 
-import com.cshikami.elevator.RiderRequest;
-
 public class MovableImpl implements Movable {
 	
 	private int destination;

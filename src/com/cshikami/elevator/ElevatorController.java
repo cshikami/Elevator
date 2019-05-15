@@ -23,11 +23,7 @@ public final class ElevatorController {
 
 
 	private ElevatorController() throws InvalidDataException {
-		//create elevators, put them in elevators HashMap, and add the elevators to the UI
-//		for (int i = 1; i <= NUM_ELEVATORS; i++) {
-//			elevators.put(i, createNewElevator(i));
-//			ElevatorDisplay.getInstance().addElevator(i, 1);
-//		}
+
 	}
 	
 	public void init() throws InvalidDataException {
@@ -89,8 +85,6 @@ public final class ElevatorController {
 	 * @throws InterruptedException 
 	 */
 	public void operateElevators(int milliseconds) throws InterruptedException {
-		//movable = MovableImplFactory.createMovable
-		//ElevatorDisplay.getInstance().updateElevator(id, floor, numRiders, dir);
 		//for all the elevators, move each elevator, regardless of elevator type
 		for (int i = 1; i <= elevators.size(); i++) {
 			//System.out.println("Operating elevator:" + elevators.get(i));
