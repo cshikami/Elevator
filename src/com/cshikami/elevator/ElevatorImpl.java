@@ -2,7 +2,6 @@ package com.cshikami.elevator;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import com.cshikami.elevator.FloorRequest;
@@ -54,7 +53,7 @@ public class ElevatorImpl implements Elevator {
 	}
 
 	public ArrayList<FloorRequest> getFloorRequests() {
-		ArrayList<FloorRequest> a = new ArrayList();
+		ArrayList<FloorRequest> a = new ArrayList<FloorRequest>();
 		for (int i = 0; i < floorRequests.size(); i++) {
 			a.add(floorRequests.get(i));
 		}
@@ -62,7 +61,7 @@ public class ElevatorImpl implements Elevator {
 	}
 
 	public ArrayList<Integer> getRiderRequests() {
-		ArrayList<Integer> a = new ArrayList();
+		ArrayList<Integer> a = new ArrayList<Integer>();
 		for (int i = 0; i < riderRequests.size(); i++) {
 			a.add(riderRequests.get(i));
 		}
@@ -197,14 +196,18 @@ public class ElevatorImpl implements Elevator {
 		printRequests();
 	}
 
+	/**
+	 * Process floor requests when there is a floor request on the current floor
+	 * @throws InterruptedException
+	 */
 	public void processFloorRequests() throws InterruptedException {
 		Collections.sort(floorRequests, new FloorRequestComparator());
-		
+
 		for (int i = 0; i < floorRequests.size(); i++) {
-			
+
 			//if current floor is equal to starting floor of the first floor request
 			if (currentFloor == floorRequests.get(i).getStart()) {
-				
+
 				System.out.print(Time.getInstance().getCurrentTime() + " " + getIdentifier() + " has arrived at " + currentFloor + " for Floor Request ");
 				printRequests();
 				//open doors
@@ -228,11 +231,17 @@ public class ElevatorImpl implements Elevator {
 		}
 	}
 
+	/**
+	 * Process rider requests when there is a rider request on the current floor
+	 * @throws InterruptedException
+	 */
 	public void processRiderRequests() throws InterruptedException {
 		for (int i = 0; i < riderRequests.size(); i++) {
+			//if current floor is equal to a rider request
 			if (currentFloor == riderRequests.get(i)) {
 				System.out.print(Time.getInstance().getCurrentTime() + " " + getIdentifier() + " has arrived at " + currentFloor + " for Rider Request ");
 				printRequests();
+				//open doors
 				openDoors();
 
 				//sleep to let people in and out
@@ -249,17 +258,21 @@ public class ElevatorImpl implements Elevator {
 
 				//remove riderRequest
 				riderRequests.remove(0);
-				//System.out.println("NO MORE RIDERS.");
+				//close doors
 				closeDoors();
 
 			}
 		}
 	}
 
+	/**
+	 * Move the elevator up or down, or remain idle, depending upon whether there are 
+	 * floor requests, rider requests, location, and how long the elevator has been idle
+	 */
 	@Override
 	public void move(int milliseconds) throws InterruptedException {
 
-		//first, check if there are floor requests && rider requests
+		//first, check if there are floor requests and rider requests
 		if (isFloorRequests() && isRiderRequests()) {
 			System.out.println("isFloorRequests() && isRiderRequests()");
 			//if there are and direction is idle, check what the direction to go
@@ -275,7 +288,7 @@ public class ElevatorImpl implements Elevator {
 				processRiderRequests();
 
 			} else {
-				//direction is DOWN
+				//move down
 				goDown();
 				processFloorRequests();
 				processRiderRequests();
@@ -288,13 +301,14 @@ public class ElevatorImpl implements Elevator {
 				//determine direction from current floor to next floor request
 				direction = Direction.determineDirection(currentFloor, floorRequests.get(0).getStart());
 				processFloorRequests();
-				
+
 			} else if(direction == Direction.UP) {
 				goUp();
 				processFloorRequests();
 
 			} else {
 				goDown();
+				processFloorRequests();
 			}
 
 			//otherwise, if we have no floor requests but we do have rider requests
@@ -302,25 +316,27 @@ public class ElevatorImpl implements Elevator {
 			direction = Direction.determineDirection(currentFloor, riderRequests.get(0));
 
 			System.out.println("!isFloorRequests() && isRiderRequests()");
+			//if idle
 			if (direction == Direction.IDLE) {
 				direction = Direction.determineDirection(currentFloor, riderRequests.get(0));
 
 				if (currentFloor == riderRequests.get(0)) {
 					System.out.print(Time.getInstance().getCurrentTime() + " " + getIdentifier() + " has arrived at " + currentFloor + " for Rider Request ");
 					printRequests();
-
 					openDoors();
 
 					//remove rider requests
 					for (int i = 0; i < riderRequests.size(); i++) {
 						riderRequests.remove(i);
 					}
+					
+					closeDoors();
 				}
-
+			//if going up
 			} else if(direction == Direction.UP) {
 				goUp();
 				processRiderRequests();
-				
+				//if going down
 			} else {
 				if (currentFloor > 1) {
 					goDown();
@@ -329,8 +345,6 @@ public class ElevatorImpl implements Elevator {
 				processFloorRequests();
 				processRiderRequests();
 			}
-
-
 
 		} else if (!isFloorRequests() && !isRiderRequests() && currentFloor != 1 && idleCount <= 10) {
 
@@ -376,7 +390,4 @@ public class ElevatorImpl implements Elevator {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-
-
-
 }

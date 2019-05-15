@@ -87,8 +87,6 @@ public final class ElevatorController {
 	public void operateElevators(int milliseconds) throws InterruptedException {
 		//for all the elevators, move each elevator, regardless of elevator type
 		for (int i = 1; i <= elevators.size(); i++) {
-			//System.out.println("Operating elevator:" + elevators.get(i));
-			//elevators.get(i).
 			elevators.get(i).move(1000);
 		}
 	}

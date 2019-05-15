@@ -26,9 +26,7 @@ import com.cshikami.time.Time;
 public class ElevDriver {
 
 	public static void main(String[] args) throws InterruptedException, InvalidDataException {
-		//need to implement timer as a Singleton
-		//after we do that, add time to all the printouts
-		//push changes to git
+
 		//finally, work on design patterns until turn in time
 		//start by simplifying giant move method by pulling out procedures
 		//into their own classes and methods
@@ -77,10 +75,10 @@ public class ElevDriver {
 		ElevatorController.getInstance().setElevatorMaxCapacity(maxPersonsPerElevator);
 		Building.getInstance();
 
-		//test1();
-		//test2();
-		//test3();
-		test4();
+//		test1();
+//		test2();
+		test3();
+		//test4();
 
 		System.out.println("DONE");
 		ElevatorDisplay.getInstance().shutdown();
