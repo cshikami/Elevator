@@ -39,5 +39,11 @@ public class StandardPerson implements Person {
 		// TODO Auto-generated method stub
 		return desiredFloor;
 	}
+
+	@Override
+	public void move(int milliseconds) throws InterruptedException {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

@@ -49,4 +49,11 @@ public class PersonImpl implements Person, Movable {
 	public int getDestination() {
 		return movable.getDestination();
 	}
+
+	@Override
+	public void move(int milliseconds) throws InterruptedException {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
