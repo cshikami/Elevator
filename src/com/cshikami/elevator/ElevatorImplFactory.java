@@ -1,6 +1,6 @@
 package com.cshikami.elevator;
 
-import com.cshikami.identification.InvalidDataException;
+import com.cshikami.exception.InvalidDataException;
 
 public class ElevatorImplFactory {
 	

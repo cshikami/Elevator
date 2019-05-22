@@ -3,8 +3,9 @@ package com.cshikami.elevator;
 
 import java.util.HashMap;
 import java.util.Map;
-import com.cshikami.identification.InvalidDataException;
-
+import com.cshikami.exception.InvalidDataException;
+import com.cshikami.exception.InvalidParamException;
+import com.cshikami.exception.InvalidRangeException;
 import com.cshikami.gui.ElevatorDisplay;
 
 /**
@@ -44,19 +45,28 @@ public final class ElevatorController {
 		return ourInstance;
 	}
 	
-	public void setElevatorMaxCapacity(int maxCapacity) {
+	public int getNumberOfElevators() {
+		return NUM_ELEVATORS;
+	}
+	
+	public void setDoorOpenTime(int time) throws InvalidParamException, InvalidDataException {
 		for (int i = 1; i <= elevators.size(); i++) {
-			elevators.get(i).setMaxPersonsPerElevator(maxCapacity);
+			getElevator(i).setDoorOpenTime(time);
 		}
 	}
 	
-	public void getElevatorMaxCapacity() {
+	public void setElevatorMaxCapacity(int maxCapacity) throws InvalidDataException, InvalidParamException {
+		for (int i = 1; i <= elevators.size(); i++) {
+			getElevator(i).setMaxPersonsPerElevator(maxCapacity);
+		}
+	}
+	
+	public void getElevatorMaxCapacity() throws InvalidDataException {
 		int capacity;
 		for (int i = 1; i < elevators.size(); i++) {
-			capacity = elevators.get(i).getMaxPersonsPerElevator();
+			capacity = getElevator(i).getMaxPersonsPerElevator();
 			System.out.println("Elevator " + i + "'s max capacity: " +capacity);
 		}
-
 	}
 
 	/**
@@ -83,8 +93,9 @@ public final class ElevatorController {
 	 * Move all elevators at speed milliseconds
 	 * @param milliseconds
 	 * @throws InterruptedException 
+	 * @throws InvalidRangeException 
 	 */
-	public void operateElevators(int milliseconds) throws InterruptedException {
+	public void operateElevators(int milliseconds) throws InterruptedException, InvalidRangeException {
 		//for all the elevators, move each elevator, regardless of elevator type
 		for (int i = 1; i <= elevators.size(); i++) {
 			elevators.get(i).move(1000);
@@ -98,6 +109,10 @@ public final class ElevatorController {
 		}
 	}
 
+	/**
+	 * Set number of elevators
+	 * @param numberOfElevators
+	 */
 	public void setNumberOfElevators(int numberOfElevators) {
 		NUM_ELEVATORS = numberOfElevators;
 	}

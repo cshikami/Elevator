@@ -6,15 +6,22 @@ import java.util.List;
 
 import com.cshikami.elevator.FloorRequest;
 import com.cshikami.building.Building;
+import com.cshikami.exception.InvalidParamException;
+import com.cshikami.exception.InvalidRangeException;
 import com.cshikami.gui.ElevatorDisplay;
 import com.cshikami.identification.Identifiable;
 import com.cshikami.identification.IdentifiableImplFactory;
-import com.cshikami.identification.InvalidDataException;
+import com.cshikami.exception.InvalidDataException;
 import com.cshikami.movement.Movable;
 import com.cshikami.movement.MovableImplFactory;
 import com.cshikami.person.Person;
 import com.cshikami.time.Time;
 
+/**
+ * Elevator impl delegate that carries out elevator functionality
+ * @author christopher_shikami
+ *
+ */
 public class ElevatorImpl implements Elevator {
 
 	private Identifiable identity;
@@ -30,6 +37,7 @@ public class ElevatorImpl implements Elevator {
 	private final List<Person> riders = new ArrayList<>();
 	private int idleCount = 0;
 	private int CAPACITY;
+	private int doorOpenTime;
 
 	public ElevatorImpl(int elevatorIdIn) throws InvalidDataException {
 		identity = IdentifiableImplFactory.createIdentifiable("Elevator");
@@ -37,11 +45,22 @@ public class ElevatorImpl implements Elevator {
 		elevatorId = elevatorIdIn;
 		currentFloor = 1;
 		direction = Direction.IDLE;
-		//setMaxPersonsPerElevator()
 	}
 
-	public void setMaxPersonsPerElevator(int maxPersonsPerElevator) {
+	public void setMaxPersonsPerElevator(int maxPersonsPerElevator) throws InvalidParamException {
+		if (maxPersonsPerElevator <= 0) {
+			throw new InvalidParamException("Invalid number of floors passed to setNumberOfFloors:  " + maxPersonsPerElevator);
+		}
+		
 		CAPACITY = maxPersonsPerElevator;
+	}
+	
+	public void setDoorOpenTime(int time) throws InvalidParamException {
+		if (time <= 0) {
+			throw new InvalidParamException("Invalid time passed to setNumberOfFloors, must be greater than 0:  " + time);
+		}
+		
+		doorOpenTime = time;
 	}
 
 	public int getMaxPersonsPerElevator() {
@@ -52,7 +71,7 @@ public class ElevatorImpl implements Elevator {
 		return elevatorId;
 	}
 
-	public ArrayList<FloorRequest> getFloorRequests() {
+	private ArrayList<FloorRequest> getFloorRequests() {
 		ArrayList<FloorRequest> a = new ArrayList<FloorRequest>();
 		for (int i = 0; i < floorRequests.size(); i++) {
 			a.add(floorRequests.get(i));
@@ -60,7 +79,7 @@ public class ElevatorImpl implements Elevator {
 		return a;
 	}
 
-	public ArrayList<Integer> getRiderRequests() {
+	private ArrayList<Integer> getRiderRequests() {
 		ArrayList<Integer> a = new ArrayList<Integer>();
 		for (int i = 0; i < riderRequests.size(); i++) {
 			a.add(riderRequests.get(i));
@@ -72,48 +91,109 @@ public class ElevatorImpl implements Elevator {
 	public String getIdentifier() {
 		return identity.getIdentifier();
 	}
+	
+	/**
+	 * Increment current floor
+	 * @throws InvalidRangeException 
+	 */
+	public void incrementCurrentFloor() throws InvalidRangeException {
+		if (currentFloor == Building.getInstance().getNumberOfFloors()) {
+			throw new InvalidRangeException("currentFloor is already at the max - Cannot increment current floor: " + currentFloor);
+		}
+		
+		currentFloor = currentFloor + 1;
+	}
+
+	/**
+	 * decrement current floor
+	 * @throws InvalidRangeException 
+	 */
+	public void decrementCurrentFloor() throws InvalidRangeException {
+		if (currentFloor == 1) {
+			throw new InvalidRangeException("currentFloor is already bottom floor - Cannot decrement current floor: " + currentFloor);
+		}
+		
+		currentFloor = currentFloor - 1;
+	}
+
+	/*
+	 * get current floor
+	 */
+	public int getCurrentFloor() {
+		return currentFloor;
+	}
 
 	@Override
-	public void addFloorRequest(FloorRequest request) {
+	public void addFloorRequest(FloorRequest request) throws InvalidParamException {
+		
+		if (request.getStart() <= 0 || request.getStart() > Building.getInstance().getNumberOfFloors() || request.getStart() == 1 && request.getDirection() == Direction.DOWN || request.getStart() == Building.getInstance().getNumberOfFloors() && request.getDirection() == Direction.UP) {
+			throw new InvalidParamException("Invalid request passed to addFloorRequest: " + request);
+		}
+		
 		floorRequests.add(request);
+		
 		if (request.getStart() != currentFloor) {
 			System.out.print(Time.getInstance().getCurrentTime() + " " + getIdentifier() + " is going to Floor " + request.getStart() + " for " + request.getDirection() + " request ");
 			printRequests();
-
-
 		} else if (request.getStart() == currentFloor) {
 			System.out.print(Time.getInstance().getCurrentTime() + " " + getIdentifier() + " is already on Floor " + request.getStart() + " for " + request.getDirection() + " request ");
 			printRequests();
 		}
 	}
 
-	public FloorRequest getFloorRequest(int floor) {
-		return floorRequests.get(floor);	
-	}
-
-	public boolean isFloorRequests() {
+	/**
+	 * Check if there are floor requests
+	 * @return true if there are floor requests
+	 */
+	private boolean isFloorRequests() {
 		return floorRequests.size() > 0;
 	}
 
-	public boolean isRiderRequests() {
+	/**
+	 * Check if there are rider requests
+	 * @return true if there are rider requests
+	 */
+	private boolean isRiderRequests() {
 		return riderRequests.size() > 0;
 	}
 
-	public void printRequests() {
+	/**
+	 * Print current floor requests and rider requests
+	 */
+	private void printRequests() {
 		System.out.print(" [Current Floor Requests: " + getFloorRequests() + "]");
 		System.out.println("[Current Rider Requests: " + getRiderRequests() + "]");
 	}
-
-	public void removeFloorRequest(int request) {
+	
+	/**
+	 * Remove floor request
+	 * @param request
+	 */
+	private void removeFloorRequests(int request) {
 		floorRequests.remove(request);
-
 	} 
 
-	public void addRider(Person newRider) {
+	/**
+	 * Remove rider request
+	 * @param request
+	 */
+	private void removeRiderRequests(int request) {
+		riderRequests.remove(request);
+	}
+	
+	/**
+	 * Add rider to riders list
+	 * @param newRider
+	 */
+	private void addRider(Person newRider) {
 		riders.add(newRider);
 	}
 
-	public void removeRider(int rider) {
+	/**
+	 * Remove rider from riders list
+	 * @param rider
+	 */
+	private void removeRider(int rider) {
 		riders.remove(rider);
 	}
 
@@ -136,27 +216,38 @@ public class ElevatorImpl implements Elevator {
 		}
 	}
 
-	public void openDoors() {
+	/**
+	 * Open doors and display a message on the console
+	 * @throws InterruptedException 
+	 */
+	public void openDoors() throws InterruptedException {
 		ElevatorDisplay.getInstance().openDoors(getElevatorId());
+		Thread.sleep(doorOpenTime);
 		System.out.println(Time.getInstance().getCurrentTime() + " " + getIdentifier() + " Doors Open");
 	}
 
+	/**
+	 * Close doors and display a message on the console
+	 */
 	public void closeDoors() {
 		ElevatorDisplay.getInstance().closeDoors(getElevatorId());
 		System.out.println(Time.getInstance().getCurrentTime() + " " + getIdentifier() + " Doors Close");
 	}
 
+	/**
+	 * Get elevator Id as a String
+	 */
 	public String toString() {
 		return "Elevator " + getElevatorId();
 	}
 
+	
 	public void sortFloorRequests(String direction) {
 
 	}
 
-	public void getDirection() {
-
-		//movable.determineDirection(int distanceFromFloorRequest, int distanceFromRiderRequest)
+	private void getDirection() {
+		//get the distance from requests regardless of direction
 		int distanceFromFloorRequest = Math.abs(currentFloor - floorRequests.get(0).getStart());
 		int distanceFromRiderRequest = Math.abs(currentFloor - riderRequests.get(0));
 		//if distance from next floor request is less than distance from next rider request
@@ -177,8 +268,9 @@ public class ElevatorImpl implements Elevator {
 
 	/**
 	 * Move elevator up one floor and print out message
+	 * @throws InvalidRangeException 
 	 */
-	public void goUp() {
+	private void goUp() throws InvalidRangeException {
 		incrementCurrentFloor();
 		ElevatorDisplay.getInstance().updateElevator(getElevatorId(), currentFloor, riders.size(), ElevatorDisplay.Direction.UP);
 		System.out.print(Time.getInstance().getCurrentTime() + " " + getIdentifier() + " moving from Floor " + (currentFloor - 1)  + " to Floor " + currentFloor);
@@ -188,8 +280,9 @@ public class ElevatorImpl implements Elevator {
 
 	/**
 	 * Move elevator down one floor and print out message
+	 * @throws InvalidRangeException 
 	 */
-	public void goDown() {
+	private void goDown() throws InvalidRangeException {
 		decrementCurrentFloor();
 		ElevatorDisplay.getInstance().updateElevator(getElevatorId(), getCurrentFloor(), riders.size(), ElevatorDisplay.Direction.DOWN);
 		System.out.print(Time.getInstance().getCurrentTime() + " " + getIdentifier() + " moving from Floor " + (currentFloor + 1)  + " to Floor " + currentFloor);
@@ -200,7 +293,7 @@ public class ElevatorImpl implements Elevator {
 	 * Process floor requests when there is a floor request on the current floor
 	 * @throws InterruptedException
 	 */
-	public void processFloorRequests() throws InterruptedException {
+	private void processFloorRequests() throws InterruptedException {
 		Collections.sort(floorRequests, new FloorRequestComparator());
 
 		for (int i = 0; i < floorRequests.size(); i++) {
@@ -213,8 +306,6 @@ public class ElevatorImpl implements Elevator {
 				//open doors
 				openDoors();
 
-				Thread.sleep(2000);
-
 				//elevator adds people waiting at the floor to it's riders
 				addFloorPeopleWaitingToRiders();
 
@@ -223,7 +314,7 @@ public class ElevatorImpl implements Elevator {
 
 				//remove people from the floor that got into the elevator
 				Building.getInstance().removeFloorPeopleWaiting(currentFloor);
-				floorRequests.remove(i);
+				removeFloorRequests(i);
 
 				//close doors
 				closeDoors();
@@ -235,7 +326,7 @@ public class ElevatorImpl implements Elevator {
 	 * Process rider requests when there is a rider request on the current floor
 	 * @throws InterruptedException
 	 */
-	public void processRiderRequests() throws InterruptedException {
+	private void processRiderRequests() throws InterruptedException {
 		for (int i = 0; i < riderRequests.size(); i++) {
 			//if current floor is equal to a rider request
 			if (currentFloor == riderRequests.get(i)) {
@@ -243,9 +334,6 @@ public class ElevatorImpl implements Elevator {
 				printRequests();
 				//open doors
 				openDoors();
-
-				//sleep to let people in and out
-				Thread.sleep(2000);
 
 				//add person to current floor's donePeople list
 				Building.getInstance().getFloor(currentFloor).addRiderToDone(riders.get(0));
@@ -257,7 +345,7 @@ public class ElevatorImpl implements Elevator {
 						" has left " + getIdentifier() + " [Riders: " + riders + "]");
 
 				//remove riderRequest
-				riderRequests.remove(0);
+				removeRiderRequests(0);
 				//close doors
 				closeDoors();
 
@@ -268,9 +356,10 @@ public class ElevatorImpl implements Elevator {
 	/**
 	 * Move the elevator up or down, or remain idle, depending upon whether there are 
 	 * floor requests, rider requests, location, and how long the elevator has been idle
+	 * @throws InvalidRangeException 
 	 */
 	@Override
-	public void move(int milliseconds) throws InterruptedException {
+	public void move(int milliseconds) throws InterruptedException, InvalidRangeException {
 
 		//first, check if there are floor requests and rider requests
 		if (isFloorRequests() && isRiderRequests()) {
@@ -362,27 +451,15 @@ public class ElevatorImpl implements Elevator {
 			goDown();
 		}
 		else {
-			openDoors();
+			//openDoors();
 			ElevatorDisplay.getInstance().updateElevator(getElevatorId(), getCurrentFloor(), riders.size(), ElevatorDisplay.Direction.IDLE);
 		}
-	}
-
-	public void incrementCurrentFloor() {
-		currentFloor = currentFloor + 1;
-	}
-
-	public void decrementCurrentFloor() {
-		currentFloor = currentFloor - 1;
-	}
-
-	public int getCurrentFloor() {
-		return currentFloor;
 	}
 
 	@Override
 	public void setDestination(int destination) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
@@ -390,4 +467,5 @@ public class ElevatorImpl implements Elevator {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
 }

@@ -13,15 +13,12 @@ import com.cshikami.person.Person;
  */
 public class Floor {
 	
-	int floorNumber; //floor number
+	private int floorNumber; //floor number
 	
 	private List<Person> peopleWaiting = new ArrayList<Person>(); 
 	private List<Person> peopleDone = new ArrayList<Person>();
-	Person person;
-	
 	
 	public Floor(int floorNumberIn) {
-		
 		floorNumber = floorNumberIn;
 	}
 	
@@ -43,11 +40,6 @@ public class Floor {
 	
 	public List<Person> getPeopleWaiting() {
 		return peopleWaiting;
-//		Person person = null;
-//		for(int i = 0; i <= peopleWaiting.size(); i++) {
-//			person = peopleWaiting.get(i);
-//		}
-//		return person;	 
 	}
 	
 	public void removePersonWaiting(int person) {

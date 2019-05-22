@@ -3,18 +3,16 @@ package com.cshikami;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import com.cshikami.building.Building;
+import com.cshikami.exception.InvalidParamException;
+import com.cshikami.exception.InvalidRangeException;
 import com.cshikami.elevator.ElevatorController;
 import com.cshikami.gui.ElevatorDisplay;
-import com.cshikami.identification.InvalidDataException;
+import com.cshikami.exception.InvalidDataException;
 import com.cshikami.time.Time;
 
 /**
@@ -25,15 +23,11 @@ import com.cshikami.time.Time;
 
 public class ElevDriver {
 
-	public static void main(String[] args) throws InterruptedException, InvalidDataException {
+	public static void main(String[] args) throws InterruptedException, InvalidParamException, InvalidDataException, InvalidRangeException {
 
-		//finally, work on design patterns until turn in time
-		//start by simplifying giant move method by pulling out procedures
-		//into their own classes and methods
-		//also, perhaps move move() into movable class
-		//need to confirm this though
 		System.out.println(Time.getInstance().getCurrentTime() + " Begin program");
 
+		// read json input file using simplejson
 		FileReader reader;
 		try {
 			// Create a FileReader object using your filename
@@ -54,37 +48,51 @@ public class ElevDriver {
 			return;
 		}
 		
-		int numberOfFloors = ((Long) jObj.get("numberOfFloorsInBuilding")).intValue();
-		Building.getInstance().setNumberOfFloors(numberOfFloors);
-		
-		Building.getInstance().init();
-		
-		int numberOfElevators = ((Long) jObj.get("numberOfElevatorsInBuilding")).intValue();
-		ElevatorController.getInstance().setNumberOfElevators(numberOfElevators);
-		
-		
-		ElevatorController.getInstance().getElevatorMaxCapacity();
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		try {
+			//get numberOfFloorsInBuilding from json file and set to int
+			int numberOfFloors = ((Long) jObj.get("numberOfFloorsInBuilding")).intValue();
+			//set number of floors in building
+			Building.getInstance().setNumberOfFloors(numberOfFloors);
+			//initialize floors in building
+			Building.getInstance().init();
+			
+			//get numberOfElevatorsInBuilding from json file and set to int
+			int numberOfElevators = ((Long) jObj.get("numberOfElevatorsInBuilding")).intValue();
+			//set number of elevators
+			ElevatorController.getInstance().setNumberOfElevators(numberOfElevators);
 
-		ElevatorDisplay.getInstance().initialize(numberOfFloors);
+			//initalize floors in elevator display
+			ElevatorDisplay.getInstance().initialize(numberOfFloors);
+			
+			//initialize elevators
+			ElevatorController.getInstance().init();
+			
+			//get maxPersonPerElevator from json file as int
+			int maxPersonsPerElevator = ((Long) jObj.get("maxPersonsPerElevator")).intValue();
+			//set that to the elevator max capacity
+			ElevatorController.getInstance().setElevatorMaxCapacity(maxPersonsPerElevator);
+			
+			//need to implement timePerFloor in program still
+			int timePerFloor = ((Long) jObj.get("timePerFloor")).intValue();
+			int doorOpenTime = ((Long) jObj.get("doorOpenTime")).intValue();
+			ElevatorController.getInstance().setDoorOpenTime(doorOpenTime);
+		} catch (NullPointerException e) {
+			System.err.println("NullPointer Exception: " + e.getMessage());
+		}
 		
-		ElevatorController.getInstance().init();
-		
-		int maxPersonsPerElevator = ((Long) jObj.get("maxPersonsPerElevator")).intValue();
-		ElevatorController.getInstance().setElevatorMaxCapacity(maxPersonsPerElevator);
 		Building.getInstance();
 
-//		test1();
-//		test2();
+		//tests to make sure elevators are functioning properly
+		test1();
+		test2();
 		test3();
-		//test4();
+		test4();
 
 		System.out.println("DONE");
 		ElevatorDisplay.getInstance().shutdown();
 	}
 
-	private static void test1() throws InterruptedException, InvalidDataException {
+	private static void test1() throws InterruptedException, InvalidDataException, InvalidParamException, InvalidRangeException {
 
 		for (int i = 0; i < 40; i++) { // This will run for 40 seconds
 
@@ -98,17 +106,15 @@ public class ElevDriver {
 		}
 	}
 
-	private static void test2() throws InvalidDataException, InterruptedException {
+	private static void test2() throws InvalidDataException, InterruptedException, InvalidParamException, InvalidRangeException {
 		
 		for (int i = 0; i < 60; i++) {
 
 			if (i == 0) {
-				//Building.getInstance().addPerson(20, 5, 2);
 				Building.getInstance().addPerson(20, 5, 2);
 			}	
 			
 			if (i == 5) {
-				//Building.getInstance().addPerson(15, 19, 2);
 				Building.getInstance().addPerson(15, 19, 2);
 			}	
 			
@@ -117,7 +123,7 @@ public class ElevDriver {
 		}
 	}
 
-	private static void test3() throws InvalidDataException, InterruptedException {
+	private static void test3() throws InvalidDataException, InterruptedException, InvalidParamException, InvalidRangeException {
 		for (int i = 0; i < 60; i++) {
 
 			if (i == 0) {
@@ -133,7 +139,7 @@ public class ElevDriver {
 		}
 	}
 
-	private static void test4() throws InvalidDataException, InterruptedException {
+	private static void test4() throws InvalidDataException, InterruptedException, InvalidParamException, InvalidRangeException {
 		for (int i = 0; i < 70; i++) {
 
 			if (i == 0) {

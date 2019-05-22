@@ -1,4 +1,4 @@
-package com.cshikami.identification;
+package com.cshikami.exception;
 
 public class InvalidDataException extends Exception {
 	

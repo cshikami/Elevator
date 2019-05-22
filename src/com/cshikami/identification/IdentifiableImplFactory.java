@@ -1,5 +1,7 @@
 package com.cshikami.identification;
 
+import com.cshikami.exception.InvalidDataException;
+
 public class IdentifiableImplFactory {
 	private static int PERSON_ID_COUNTER = 1; // Used to generate Person id's
 	private static int ELEVATOR_ID_COUNTER = 1; // Used to generate Elevator id's

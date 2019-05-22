@@ -1,5 +1,12 @@
 package com.cshikami.identification;
 
+import com.cshikami.exception.InvalidDataException;
+
+/**
+ * Person identifiable object to set and get identifier
+ * @author christopher_shikami
+ *
+ */
 public class PersonIdentifiableImpl implements Identifiable {
 	
 	private String identifier;

@@ -2,10 +2,15 @@ package com.cshikami.person;
 
 import com.cshikami.identification.Identifiable;
 import com.cshikami.identification.IdentifiableImplFactory;
-import com.cshikami.identification.InvalidDataException;
+import com.cshikami.exception.InvalidDataException;
 import com.cshikami.movement.Movable;
 import com.cshikami.movement.MovableImplFactory;
 
+/**
+ * Person implementation object
+ * @author christopher_shikami
+ *
+ */
 public class PersonImpl implements Person, Movable {
 	
 	int desiredFloor;
@@ -28,14 +33,6 @@ public class PersonImpl implements Person, Movable {
 		return movable.getDestination();
 	}
 	
-//	public void setDesiredDestinationFloor(int desiredFloorIn) {
-//		movable.setDestination(desiredFloorIn);
-//		
-//	}
-//	public void setDestination(double x, double y, double z) throws InvalidDataException {
-//        myMovable.setDestination(x, y, z);
-//    }
-	
 	public String toString() {
 		return identity.getIdentifier();
 	}
@@ -52,7 +49,6 @@ public class PersonImpl implements Person, Movable {
 
 	@Override
 	public void move(int milliseconds) throws InterruptedException {
-		// TODO Auto-generated method stub
 		
 	}
 

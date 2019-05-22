@@ -1,6 +1,6 @@
 package com.cshikami.person;
 
-import com.cshikami.identification.InvalidDataException;
+import com.cshikami.exception.InvalidDataException;
 
 public class PersonImplFactory {
 	

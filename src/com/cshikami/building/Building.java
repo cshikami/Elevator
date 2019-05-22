@@ -1,6 +1,5 @@
 package com.cshikami.building;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,8 +7,9 @@ import java.util.Map;
 import com.cshikami.elevator.Direction;
 import com.cshikami.elevator.ElevatorController;
 import com.cshikami.elevator.FloorRequest;
+import com.cshikami.exception.InvalidParamException;
 import com.cshikami.floor.Floor;
-import com.cshikami.identification.InvalidDataException;
+import com.cshikami.exception.InvalidDataException;
 import com.cshikami.person.Person;
 import com.cshikami.person.PersonImplFactory;
 import com.cshikami.time.Time;
@@ -50,8 +50,16 @@ public final class Building {
 		}
 	}
 	
-	public void setNumberOfFloors(int numberOfFloorsIn) {
+	public void setNumberOfFloors(int numberOfFloorsIn) throws InvalidParamException {
+		if (numberOfFloorsIn <= 0) {
+			throw new InvalidParamException("Invalid number of floors passed to setNumberOfFloors:  " + numberOfFloorsIn);
+		}
+		
 		NUM_FLOORS = numberOfFloorsIn;
+	}
+	
+	public int getNumberOfFloors() {
+		return NUM_FLOORS;
 	}
 	
 	/**
@@ -60,9 +68,17 @@ public final class Building {
 	 * @param endFloor
 	 * @param elevatorNumber the chosen elevator
 	 * @throws InvalidDataException
+	 * @throws InvalidParamException 
 	 */
-	public void addPerson(int startFloor, int endFloor, int elevatorNumber) throws InvalidDataException {
+	public void addPerson(int startFloor, int endFloor, int elevatorNumber) throws InvalidDataException, InvalidParamException {
+		if (startFloor <= 0 || endFloor <= 0 || startFloor > Building.getInstance().getNumberOfFloors() || 
+				endFloor >= Building.getInstance().getNumberOfFloors()) {
+			throw new InvalidParamException("Invalid start floor or end floor passed to addPerson, startFloor: " + startFloor + ", endFloor: " + endFloor);
+		}
 		
+		if (elevatorNumber <= 0 || elevatorNumber > ElevatorController.getInstance().getNumberOfElevators()) {
+			throw new InvalidParamException("Invalid elevator number passed to addPerson: " + elevatorNumber);
+		}
 		//determine direction to go based on startFloor and endfloor
 		Direction d = Direction.determineDirection(startFloor, endFloor);
 		
@@ -76,28 +92,6 @@ public final class Building {
 		//get Elevator number and add a floor request to the elevator specified by elevatorNumber
 		ElevatorController.getInstance().getElevator(elevatorNumber).addFloorRequest(new FloorRequest(startFloor, d));
 	}
-	
-	public List<Person> getPeopleWaiting() {
-		List<Person> people = new ArrayList<Person>();
-		for(int i = 1; i < floors.size(); i++) {
-			people = floors.get(i).getPeopleWaiting();
-		}
-		return people;
-	}
-	
-	public List<Person> getPeopleDone() {
-		List<Person> people = new ArrayList<Person>();
-		for (int i = 1; i < floors.size(); i++) {
-			people = floors.get(i).getPeopleDone();
-		}
-		return people;
-	}
-	
-	
-	
-//	public Person getPersonWaiting() {
-//		
-//	}
 	
 	public Floor getFloor(int currentFloor) {
 		return floors.get(currentFloor);
@@ -118,7 +112,7 @@ public final class Building {
 		floor.removePeopleWaiting();
 	}
 	
-	public void removePersonFromFloor(int theFloor) {
+	public void removePersonFromFloor(int theFloor) { 
 		Floor floor = floors.get(theFloor);
 		floor.removePersonWaiting(0);
 	}

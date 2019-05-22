@@ -3,6 +3,11 @@ package com.cshikami.time;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * Singleton Time class to get the current time in the program
+ * @author christopher_shikami
+ *
+ */
 public final class Time {
 
 	private volatile static Time ourInstance;

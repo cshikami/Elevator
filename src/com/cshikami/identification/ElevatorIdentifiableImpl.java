@@ -1,5 +1,7 @@
 package com.cshikami.identification;
 
+import com.cshikami.exception.InvalidDataException;
+
 public class ElevatorIdentifiableImpl implements Identifiable {
 	
 	private String identifier;
